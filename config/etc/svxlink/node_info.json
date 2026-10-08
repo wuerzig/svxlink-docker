@@ -1,0 +1,69 @@
+{
+  "nodeLocation": "Dresden, Germany",
+  "hidden": false,
+  "sysop": "DO5EX",
+  "toneToTalkgroup": {"136.5": 0, "88.5": 999, "123.0": 9990},
+  "qth": [
+    {
+      "Thomas": "Dresden",
+      "pos": {
+        "lat": 51.0, 
+        "long": 13.825,
+        "loc": "JO61"
+      }
+    }]
+}
+#      "rx": {
+#        "A": {
+#          "name": "Rx1",
+#          "freq": 434.460,
+#          "sqlType": "CTCSS",
+#          "ctcssFreq": [136.5,88.5,123.0],
+#          "ant": [
+#            {
+#              "comment": "GP",
+#              "height": 50,
+#              "dir": 360
+#            },
+#            {
+#              "comment": "GP",
+#              "height": 50,
+#              "dir": 360
+#            }
+#          ]
+#        },
+#        "B": {
+#          "name": "Rx2",
+#          "freq": 145.500,
+#          "sqlType": "COS",
+#          "ant": [
+#            {
+#              "comment": "Diamond X310 Omni",
+#              "height": 10
+#            }
+#          ]
+#        }
+ #     },
+ #     "tx": {
+ #       "A": {
+#          "name": "Tx1",
+#          "freq": 433.450,
+#          "pwr": 20,
+#          "ctcssFreq": 136.5,
+#          "ant": [
+#            {
+#              "comment": "Yagi south",
+#              "height": 50,
+#              "dir": 180
+#            },
+#            {
+#              "comment": "Yagi north",
+#              "height": 50,
+#              "dir": 0
+#            }
+#          ]
+#        }
+#      }
+#    }
+#  ]
+#}

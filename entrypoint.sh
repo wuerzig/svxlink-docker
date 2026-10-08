@@ -20,7 +20,7 @@ log() {
 }
 
 die() {
-  log "ERREUR: $*"
+  log "ERROR: $*"
   exit 1
 }
 
@@ -29,22 +29,22 @@ need_file_if_enabled() {
   file="$2"
   name="$3"
   if [ "$enabled" = "1" ] && [ ! -f "$file" ]; then
-    die "Config $name introuvable: $file (montage volume attendu)"
+    die "Config $name not found: $file (volume mount expected)"
   fi
 }
 
 start_bg() {
   name="$1"
   shift
-  log "Démarrage: $name -> $*"
+  log "Starting: $name -> $*"
   "$@" &
   pid="$!"
   pids="$pids $pid"
-  log "$name lancé (pid=$pid)"
+  log "$name started (pid=$pid)"
 }
 
 stop_all() {
-  log "Arrêt demandé, arrêt des processus: $pids"
+  log "Shutdown requested, stopping processes: $pids"
   for pid in $pids; do
     kill -TERM "$pid" 2>/dev/null || true
   done
@@ -65,29 +65,29 @@ stop_all() {
   for pid in $pids; do
     kill -KILL "$pid" 2>/dev/null || true
   done
-  log "Arrêt terminé."
+  log "Shutdown complete."
 }
 
 trap 'stop_all; exit 0' INT TERM
 
-# Vérifications des binaires
+# Binary checks
 if [ "$START_SVXLINK" = "1" ] && ! command -v svxlink >/dev/null 2>&1; then
-  die "Binaire svxlink introuvable (paquet manquant ?)"
+  die "svxlink binary not found (missing package?)"
 fi
 if [ "$START_REMOTETRX" = "1" ] && ! command -v remotetrx >/dev/null 2>&1; then
-  die "Binaire remotetrx introuvable (paquet manquant ?)"
+  die "remotetrx binary not found (missing package?)"
 fi
 if [ "$START_SVXREFLECTOR" = "1" ] && ! command -v svxreflector >/dev/null 2>&1; then
-  die "Binaire svxreflector introuvable (paquet manquant ?)"
+  die "svxreflector binary not found (missing package?)"
 fi
 
-# Vérif des configs si les services sont activés
+# Config checks for the services that are enabled
 need_file_if_enabled "$START_SVXLINK" "$SVXLINK_CONF" "svxlink"
 need_file_if_enabled "$START_REMOTETRX" "$REMOTETRX_CONF" "remotetrx"
 need_file_if_enabled "$START_SVXREFLECTOR" "$SVXREFLECTOR_CONF" "svxreflector"
 
-# Démarrages
-# (souvent pratique de démarrer le reflector en premier s'il est utilisé)
+# Startup
+# (often handy to start the reflector first if it is used)
 if [ "$START_SVXREFLECTOR" = "1" ]; then
   start_bg "svxreflector" svxreflector --config "$SVXREFLECTOR_CONF" $SVXREFLECTOR_ARGS
 fi
@@ -100,13 +100,13 @@ if [ "$START_SVXLINK" = "1" ]; then
   start_bg "svxlink" svxlink --config "$SVXLINK_CONF" $SVXLINK_ARGS
 fi
 
-# Petit message clair si rien n'est activé
-# (attention: pids contient un espace initial; on teste sur la présence de chiffres)
+# A clear message if nothing is enabled
+# (careful: pids starts with a space; we test for the presence of digits)
 if ! echo "$pids" | grep -q '[0-9]'; then
-  die "Aucun service activé. Mets START_SVXLINK=1 et/ou START_REMOTETRX=1 et/ou START_SVXREFLECTOR=1"
+  die "No service enabled. Set START_SVXLINK=1 and/or START_REMOTETRX=1 and/or START_SVXREFLECTOR=1"
 fi
 
-log "Tous les services demandés sont lancés. Attente…"
+log "All requested services are running. Waiting…"
 
 exit_code=0
 for pid in $pids; do
@@ -115,5 +115,5 @@ for pid in $pids; do
   fi
 done
 
-log "Fin (exit_code=$exit_code)"
+log "Done (exit_code=$exit_code)"
 exit "$exit_code"

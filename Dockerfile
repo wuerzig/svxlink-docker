@@ -16,7 +16,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 
 ARG GIT_URL=https://github.com/sm0svx/svxlink.git
 ARG GIT_BRANCH=master
-ARG NUM_CORES=4
+ARG NUM_CORES=8
 
 WORKDIR /build
 RUN git clone --recursive --depth 1 --branch "${GIT_BRANCH}" "${GIT_URL}" svxlink
@@ -52,7 +52,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
     libasyncaudio1.6t64 libasynccore1.6t64 libasynccpp1.6t64 libcurl4t64 \
     libgcrypt20 libgsm1 libjsoncpp26 libpopt0 librtlsdr0 \
     libsigc++-2.0-0v5 libtcl8.6 libgcc-s1 libstdc++6 \
-    libasound2 libgpiod3 libogg0 \
+    libasound2 libgpiod3 libogg0 alsa-utils \
  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build/svxlink/build/*.deb /tmp/svxlink.deb
@@ -68,6 +68,7 @@ RUN mkdir -p /etc/svxlink /var/log/svxlink /var/lib/svxlink && \
 ENV SVXLINK_CONF=/etc/svxlink/svxlink.conf \
     REMOTETRX_CONF=/etc/svxlink/remotetrx.conf \
     SVXREFLECTOR_CONF=/etc/svxlink/svxreflector.conf
+
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

@@ -1,0 +1,32 @@
+###############################################################################
+#
+# Tcl module implementation
+#
+###############################################################################
+
+#
+# This is the namespace in which all functions and variables below will exist.
+# The name must match the configuration variable "NAME" in the
+# [ModuleTcl] section in the configuration file. The name may be changed
+# but it must be changed in both places.
+#
+namespace eval Tcl {
+
+# Source base functionality for a TCL module
+sourceTclWithOverrides "TclModule.tcl"
+
+
+#
+# Copy only the functions that you need to override from the file TclModule.tcl
+# into this file.
+#
+
+
+
+# end of namespace
+}
+
+
+#
+# This file has not been truncated
+#

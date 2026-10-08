@@ -41,8 +41,9 @@ services:
       - ./data:/var/lib/svxlink
 
     # Sound card and GPIO access (optionnel)
-    # devices:
-      # - /dev/snd:/dev/snd
+    devices:
+     - /dev/snd:/dev/snd
+     - /dev/hidraw-radio:/dev/hidraw0
       # - /dev/gpiochip0:/dev/gpiochip0
 
     # (Optionnel) USB/RTL-SDR
