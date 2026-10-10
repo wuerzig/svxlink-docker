@@ -159,6 +159,47 @@ SVXLINK_ARGS=--logfile=/var/log/svxlink/svxlink.log
 
 ---
 
+## DJspot SA818 frequency
+
+The DJspot HAT's radio is an SA818-class module (Beken 81BK clone) tuned over a
+CH341 UART with `AT+DMOSETGROUP` commands. svxlink has no driver for it — it only
+drives the CM108B (ALSA audio + HID PTT/COS) — so the module is programmed once at
+container startup by `scripts/djspot-set-freq.sh`, which `entrypoint.sh` runs just
+before launching svxlink. The module is "sticky" (it keeps the last frequency
+across power cycles), so this one-shot seed is sufficient and any failure is
+non-fatal (svxlink still starts).
+
+The DJspot exposes two identical CH341 UARTs (`1a86:7522`); the script auto-detects
+the SA818 by sending `AT+DMOCONNECT` and keeping the port that replies
+`+DMOCONNECT:0`. Both `/dev/ttyUSB*` ports must therefore be mapped into the
+container (see the `devices:` block in `docker-compose.yml`).
+
+Configure it via environment variables (defaults shown; **default frequency is
+433.125 MHz**):
+
+```env
+DJSPOT_SET_FREQ=1          # 1 = seed the module at startup, 0 = skip
+DJSPOT_TX_FREQ=433.1250    # MHz
+DJSPOT_RX_FREQ=433.1250    # MHz
+DJSPOT_BW=1                # 0 = 12.5 kHz narrow, 1 = 25 kHz wide
+DJSPOT_TX_CTCSS=0000       # CTCSS index, 0000 = none
+DJSPOT_RX_CTCSS=0000
+DJSPOT_SQL=4               # squelch 0-8 (0 = always-open on this clone, use >=1)
+DJSPOT_POWER=1             # 7th DMOSETGROUP field: 1 = high, 0 = low
+#DJSPOT_VOLUME=6           # optional AT+DMOSETVOLUME seed
+#DJSPOT_SERIAL=/dev/ttyUSB0  # pin a port instead of auto-detecting
+```
+
+Check it worked:
+
+```sh
+docker compose logs | grep djspot
+# -> SA818 detected on /dev/ttyUSBx
+# -> frequency programmed OK (tx=433.1250 rx=433.1250 ...)
+```
+
+---
+
 ## Notes
 
 - Make sure your audio devices and GPIO access are properly configured on the host

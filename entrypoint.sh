@@ -97,6 +97,15 @@ if [ "$START_REMOTETRX" = "1" ]; then
 fi
 
 if [ "$START_SVXLINK" = "1" ]; then
+  # DJspot HAT: program the SA818 module's frequency before svxlink starts.
+  # svxlink only drives the CM108B (audio + HID PTT/COS); the radio module is
+  # tuned over its CH341 UART. The module is sticky, so this is a one-shot
+  # seed and any failure is non-fatal (we still start svxlink).
+  if [ "${DJSPOT_SET_FREQ:-0}" = "1" ] && [ -x /usr/local/bin/djspot-set-freq.sh ]; then
+    log "Seeding DJspot SA818 frequency..."
+    /usr/local/bin/djspot-set-freq.sh || log "WARN: djspot-set-freq.sh failed (continuing)"
+  fi
+
   start_bg "svxlink" svxlink --config "$SVXLINK_CONF" $SVXLINK_ARGS
 fi
 

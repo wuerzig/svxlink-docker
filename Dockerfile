@@ -71,7 +71,8 @@ ENV SVXLINK_CONF=/etc/svxlink/svxlink.conf \
 
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY scripts/djspot-set-freq.sh /usr/local/bin/djspot-set-freq.sh
+RUN chmod +x /entrypoint.sh /usr/local/bin/djspot-set-freq.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 # CMD ["svxlink", "-c", "/etc/svxlink/svxlink.conf"]
