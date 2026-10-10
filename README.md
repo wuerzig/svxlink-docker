@@ -1,4 +1,4 @@
-# SVXLink Docker Setup
+# SVXLink Docker Setup for fm-funknetz.de, with DJSpot support
 
 SvxLink is an open-source software suite designed for the **amateur radio (ham radio)** community.  
 Originally started in 2003 as an EchoLink application for Linux, SvxLink has evolved into a powerful and flexible system supporting:
@@ -9,8 +9,9 @@ Originally started in 2003 as an EchoLink application for Linux, SvxLink has evo
 - Voice services and logic scripting  
 
 This repository provides a **Docker-based setup** to simplify building, configuring, and running SvxLink in a clean, reproducible environment.
+The Setup explicitly supports the DJSpot hardware, connected to a standard PC, or a Raspberry Pi mini computer.
 
-✅ Compatible with **Debian Trixie**  
+✅ Compatible with **Debian Trixie**  and **Ubuntu Linux**
 ✅ Supports **GPIOD-based GPIO management**
 
 ---
