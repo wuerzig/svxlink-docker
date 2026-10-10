@@ -32,11 +32,11 @@ services:
       - DJSPOT_SET_FREQ=1
       - DJSPOT_TX_FREQ=433.1250   # MHz
       - DJSPOT_RX_FREQ=433.1250   # MHz
-      - DJSPOT_BW=1               # 0=12.5kHz narrow, 1=25kHz wide
-      - DJSPOT_TX_CTCSS=0000      # CTCSS index, 0000=none
-      - DJSPOT_RX_CTCSS=0000
+      - DJSPOT_BW=0               # 0=12.5kHz narrow, 1=25kHz wide (clone is narrow-only)
+      - DJSPOT_TX_CTCSS=0         # CTCSS index, plain integer (e.g. 18); 0=no tone
+      - DJSPOT_RX_CTCSS=0
       - DJSPOT_SQL=4              # squelch 0-8 (0=always open on this clone)
-      - DJSPOT_POWER=1            # 7th DMOSETGROUP field: 1=high, 0=low
+      - DJSPOT_POWER=1            # 7th DMOSETGROUP field (clone dialect): 1=high, 0=low
       # - DJSPOT_VOLUME=6         # optional AT+DMOSETVOLUME seed
       # - DJSPOT_SERIAL=/dev/ttyUSB0  # pin a port instead of auto-detecting
 

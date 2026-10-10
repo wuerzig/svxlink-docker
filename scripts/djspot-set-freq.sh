@@ -23,14 +23,18 @@ set -u
 # Frequencies in MHz; formatted to 4 decimals (e.g. 440.0250) before sending.
 DJSPOT_TX_FREQ="${DJSPOT_TX_FREQ:-433.1250}"
 DJSPOT_RX_FREQ="${DJSPOT_RX_FREQ:-433.1250}"
-# Bandwidth: 0 = 12.5 kHz (narrow), 1 = 25 kHz (wide)
-DJSPOT_BW="${DJSPOT_BW:-1}"
-# CTCSS index, 0000 = none (see the module's CTCSS table)
-DJSPOT_TX_CTCSS="${DJSPOT_TX_CTCSS:-0000}"
-DJSPOT_RX_CTCSS="${DJSPOT_RX_CTCSS:-0000}"
+# Bandwidth: 0 = 12.5 kHz (narrow), 1 = 25 kHz (wide).
+# The 81BK SA818 clone on the DJspot is 12.5 kHz only and NAKs wide (GBW=1).
+DJSPOT_BW="${DJSPOT_BW:-0}"
+# CTCSS index as a PLAIN integer in this clone's dialect (e.g. 18); 0 = no tone.
+# NOT the classic SA818 zero-padded "0000" form, which this module NAKs.
+DJSPOT_TX_CTCSS="${DJSPOT_TX_CTCSS:-0}"
+DJSPOT_RX_CTCSS="${DJSPOT_RX_CTCSS:-0}"
 # Squelch level 0-8. NOTE: 0 = monitor/always-open on this clone; use >=1.
 DJSPOT_SQL="${DJSPOT_SQL:-4}"
-# 7th DMOSETGROUP field on this clone = TX power, 1 = high, 0 = low.
+# 7th DMOSETGROUP field used by this clone's dialect (per AT-Radio.txt),
+# reportedly TX power 1=high/0=low. Leave EMPTY only to fall back to a plain
+# 6-field command.
 DJSPOT_POWER="${DJSPOT_POWER:-1}"
 # Optional audio seeds; leave empty to skip. VOLUME 1-8.
 DJSPOT_VOLUME="${DJSPOT_VOLUME:-}"
@@ -95,7 +99,9 @@ fi
 # --- Program frequency -------------------------------------------------------
 TXF="$(printf '%.4f' "$DJSPOT_TX_FREQ")"
 RXF="$(printf '%.4f' "$DJSPOT_RX_FREQ")"
-GROUP="AT+DMOSETGROUP=${DJSPOT_BW},${TXF},${RXF},${DJSPOT_TX_CTCSS},${DJSPOT_SQL},${DJSPOT_RX_CTCSS},${DJSPOT_POWER}"
+GROUP="AT+DMOSETGROUP=${DJSPOT_BW},${TXF},${RXF},${DJSPOT_TX_CTCSS},${DJSPOT_SQL},${DJSPOT_RX_CTCSS}"
+# Append the optional 7th field only when explicitly requested.
+[ -n "$DJSPOT_POWER" ] && GROUP="${GROUP},${DJSPOT_POWER}"
 
 log "sending: $GROUP"
 # PLL retune can take ~2s on this clone, so allow 3s for the reply.
