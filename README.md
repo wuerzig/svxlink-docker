@@ -106,14 +106,16 @@ SvxLink configuration is managed using Docker volumes.
 # DJSpot set-up
 ## Static device file
 
-To make your DJSpot device sticky on the host system, set up a udev rule. Use
+DJSpot uses a HID device to interact with PTT and the Squelch. To make this device sticky on the host system, set up a udev rule:
+
+Use
 
 ```
 lsusb
 ```
 
-to find the device-id of the hid interface of the DJSpot, it should look like this `0d8c:XXXX`.
-Next, edit udev-fix.md and edit `ATTRS{idProduct}=="0012"` (two times) to your matching ID, the `XXXX` part you got from `lsusb`
+to find the device-id of the hid interface of DJSpot, it should look like this `0d8c:XXXX`.
+Next, edit udev-fix.md and modify `ATTRS{idProduct}=="0012"` (two times) to your matching ID, the `XXXX` part you got from `lsusb`
 Copy the file to `/etc/udev/rules.d/99-svxlink-usb-audio.rules`
 
 ```
