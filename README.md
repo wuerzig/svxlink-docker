@@ -1,4 +1,9 @@
-# SVXLink Docker Setup for fm-funknetz.de, with DJSpot support
+# SVXLink Docker image for fm-funknetz.de
+
+This is a fork of the excellent SVXLink Docker Setup by f4hlv, https://github.com/f4hlv/svxlink-docker
+It explicitly targets the DJSpot hardware built by BV5DJ, but supports other devices as well
+
+## SVXLink Docker Setup
 
 SvxLink is an open-source software suite designed for the **amateur radio (ham radio)** community.  
 Originally started in 2003 as an EchoLink application for Linux, SvxLink has evolved into a powerful and flexible system supporting:
@@ -57,26 +62,14 @@ docker compose version
 ### Clone the Repository
 
 ```sh
-git clone https://github.com/f4hlv/svxlink-docker.git
+git clone https://github.com/wuerzig/svxlink-docker.git
 cd svxlink-docker
 ```
 
 ### Configure and Start
 
-Edit `docker-compose.yml` to match your needs, then start the container:
+Edit `config/etc/svxlink/svxlink.conf` and `config/etc/svxlink/node_info.json`, at the very least replace your fm-funknetz user-name and password
 
-### Retrieve Original SvxLink Files
-
-If you want to extract the original SvxLink configuration and data files from the container:
-
-```sh
-mkdir -p config/etc config/usr/share
-
-docker compose cp svxlink:/etc/svxlink config/etc/
-docker compose cp svxlink:/usr/share/svxlink config/usr/share/
-```
-
-This is useful as a starting point for customization.
 ```sh
 docker compose up -d
 ```
@@ -108,57 +101,26 @@ docker compose up -d
 
 SvxLink configuration is managed using Docker volumes.
 
-### Import Your Own Configuration
-
-Edit or add files inside the `/config` directory.  
-You may override only the files you need or mount full directories.
-
-### Mount a Single Configuration File
-
-Example for `svxlink.conf`:
-
-```yaml
-./svxlink.conf:/etc/svxlink/svxlink.conf
-```
-
-### Mount Full Directories
-
-```yaml
-./config/etc/svxlink:/etc/svxlink
-./config/usr/share/svxlink:/usr/share/svxlink
-```
-
 ---
 
-## Environment Variables
+# DJSpot set-up
+## Static device file
 
-Environment variables allow you to choose which services start and which configuration files are used.
+To make your DJSpot device sticky on the host system, set up a udev rule. Use
 
-### Enable Services at Startup
-
-Set the value to `1` to enable, `0` to disable:
-
-```env
-START_SVXLINK=1
-START_REMOTETRX=0
-START_SVXREFLECTOR=0
+```
+lsusb
 ```
 
-### Select Configuration Files
+to find the device-id of the hid interface of the DJSpot, it should look like this `0d8c:XXXX`.
+Next, edit udev-fix.md and edit `ATTRS{idProduct}=="0012"` (two times) to your matching ID, the `XXXX` part you got from `lsusb`
+Copy the file to `/etc/udev/rules.d/99-svxlink-usb-audio.rules`
 
-```env
-SVXLINK_CONF=/etc/svxlink/svxlink.conf
-REMOTETRX_CONF=/etc/svxlink/remotetrx.conf
-SVXREFLECTOR_CONF=/etc/svxlink/svxreflector.conf
+```
+sudo cp udev-fix.md /etc/udev/rules.d/99-svxlink-usb-audio.rules
 ```
 
-### Log file
-Example for svxlink
-```env
-SVXLINK_ARGS=--logfile=/var/log/svxlink/svxlink.log
-```
-
----
+This creates a static device file `/dev/hidraw-radio` whenever you hook up your DJSpot to the host, no matter what port you connect it to.
 
 ## DJspot SA818 frequency
 
